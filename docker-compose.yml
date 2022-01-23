@@ -1,0 +1,57 @@
+version: '3.3'
+
+services:
+  training-assistant:
+    build:
+      context: .
+    environment:
+      MONGODB_HOST: localhost
+      MONGODB_USER: artur
+      MONGODB_PASSWORD: pass12345
+      SERVER_PORT: 8085
+      AUTH_URL: http://localhost:8088/auth
+    depends_on:
+      - mongodb
+    network_mode: host
+
+  mongodb:
+    image: mongo:4.4.0
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=artur
+      - MONGO_INITDB_ROOT_PASSWORD=pass12345
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_container:/var/lib/mongodb/data/db
+    restart: unless-stopped
+
+  postgres:
+    image: library/postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pwd123}
+      POSTGRES_DB: keycloak_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_container:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  keycloak:
+    image: jboss/keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak_db
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-pwd123}
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: pwd123
+    ports:
+      - "8088:8080"
+    depends_on:
+      - postgres
+
+volumes:
+  mongodb_data_container:
+  postgres_data_container:

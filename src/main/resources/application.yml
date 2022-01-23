@@ -1,0 +1,32 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: ${SERVER_PORT:8085}
+  error:
+    include-exception: true
+logging:
+  level:
+    root: INFO
+spring:
+  application.name: ${APPLICATION_NAME:training-assistant}
+  data:
+    mongodb:
+      host: ${MONGODB_HOST:localhost}
+      port: 27017
+      database: training-assistant-db
+      username: ${MONGODB_USER:artur}
+      password: ${MONGODB_PASSWORD:pass12345}
+      authentication-database: admin
+      auto-index-creation: true
+keycloak:
+  auth-server-url: ${AUTH_URL:http://localhost:8088/auth}
+  realm: my-realm
+  ssl-required: external
+  resource: training-assistant
+  use-resource-role-mappings: true
+  credentials:
+    secret: ${SECRET:MIgbtpnll26drnwEJ3vesRvBWmG55SJb}
+mongock:
+  change-logs-scan-package: com.example.trainingassistant.config
